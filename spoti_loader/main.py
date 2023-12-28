@@ -102,18 +102,24 @@ def send_to_discord(webhook_url, title, content, color=2605644):
 def send_discord_notifications(songs, errors):
     songs = [song for song in songs if song is not None]
     errors = [error for error in errors if error is not None]
-    if len(songs) > 0:
-        succes_title = "**Downloaded songs : **"
-        count_msg = f"{len(songs)} tracks successfuly downloaded"
-        songs.insert(0, count_msg)
-        songs.insert(0, succes_title)
-        success_message = "\n".join(songs)
-        send_to_discord(discord, "SpotiLoader Downloads", success_message)
-    if len(errors) > 0:
-        errormsg = "**Errors when downloading songs : **"
-        errors.insert(0, errormsg)
-        error_message = "\n".join(errors)
-        send_to_discord(discord, "SpotiLoader Errors", error_message, 16753920)
+    for i in range(0, len(songs), 20):
+        batch_songs = songs[i : i + 20]
+        if len(batch_songs) > 0:
+            succes_title = "**Downloaded songs : **"
+            count_msg = f"{len(batch_songs)} tracks successfully downloaded"
+            batch_songs.insert(0, count_msg)
+            batch_songs.insert(0, succes_title)
+            batch_songs.insert(0, "@everyone")
+            success_message = "\n".join(batch_songs)
+            send_to_discord(discord, "SpotiLoader Downloads", success_message)
+    for i in range(0, len(errors), 20):
+        batch_errors = errors[i : i + 20]
+        if len(batch_errors) > 0:
+            errormsg = "**Errors when downloading songs : **"
+            batch_errors.insert(0, "@everyone")
+            batch_errors.insert(0, errormsg)
+            error_message = "\n".join(batch_errors)
+            send_to_discord(discord, "SpotiLoader Errors", error_message, 16753920)
 
 
 def download_songs() -> tuple[list, list]:
@@ -122,8 +128,9 @@ def download_songs() -> tuple[list, list]:
     for song in get_saved_tracks():
         if song[TRACK][NAME] and song[TRACK][ID]:
             try:
-                logger.info(f"Downloading {song[TRACK][NAME]}")
                 songtitle = download_track(session, token, output, song[TRACK][ID])
+                if songtitle is not None:
+                    logger.info(f"Downloaded {song[TRACK][NAME]}")
                 downloaded.append(songtitle)
             except Exception as e:
                 errors.append(e)

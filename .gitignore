@@ -1,3 +1,4 @@
+ffmpeg
 __pycache__/
 dist/
 .venv/

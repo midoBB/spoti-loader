@@ -115,9 +115,6 @@ def get_song_info(
     song_id,
 ):
     (raw, info) = invoke_url(token, f"{TRACKS_URL}?ids={song_id}&market=from_token")
-    with open("output.json", "w") as f:
-        # Write the dictionary data into the file
-        json.dump(info, f)
     if not TRACKS in info:
         raise ValueError(f"Invalid response from TRACKS_URL:\n{raw}")
     try:
@@ -175,7 +172,7 @@ def download_track(session, token: str, downloadPath: str, track_id: str) -> Non
             duration_ms,
         ) = get_song_info(token, track_id)
         song_name = fix_filename(artists[0]) + " - " + fix_filename(name)
-        ext = EXT_MAP.get("aac")
+        ext = EXT_MAP.get("ogg")
 
         output_template = output_template.replace("{artist}", fix_filename(artists[0]))
         output_template = output_template.replace("{album}", fix_filename(album_name))
@@ -277,7 +274,7 @@ def download_track(session, token: str, downloadPath: str, track_id: str) -> Non
 def convert_audio_format(filename) -> None:
     temp_filename = f"{PurePath(filename).parent}.tmp"
     Path(filename).replace(temp_filename)
-    download_format = "aac"
+    download_format = "ogg"
     file_codec = CODEC_MAP.get(download_format, "copy")
     if file_codec != "copy":
         bitrate = "160k"
