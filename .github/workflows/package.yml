@@ -47,8 +47,8 @@ jobs:
         cp ./requirements.txt ./spoti_loader-0.1.0
         mkdir dest-armv7
         mkdir dest-amd64
-        cp ./spoti_loader-0.1.0/* dest-armv7
-        cp ./spoti_loader-0.1.0/* dest-amd64
+        cp -r ./spoti_loader-0.1.0/* dest-armv7
+        cp -r ./spoti_loader-0.1.0/* dest-amd64
         cp ./ffmpeg-armv7 dest-armv7
         cp ./ffmpeg-amd64 dest-amd64
         mkdir dest
