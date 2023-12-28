@@ -51,7 +51,7 @@ jobs:
             ;;
         esac
         wget "$URL"
-        tar -C ffmpeg -xf *.tar.xz --strip-components=1 --no-anchored '*/ffmpeg*'
+        tar -C ffmpeg -xf *.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
     - name: Append Requirements to Tarball
       run: |
         tar -xzvf ./dist/spoti_loader-0.1.0.tar.gz
