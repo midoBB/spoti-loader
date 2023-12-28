@@ -36,11 +36,11 @@ jobs:
       run: |
         wget "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-static.tar.xz"
         wget "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
-        tar -xf ffmpeg-release-armhf-static.tar.xz.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
+        tar -xf ffmpeg-release-armhf-static.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
         FILE=$(ls | grep ffmpeg)
         mv $FILE ffmpeg-armv7
         rm ffmpeg
-        tar -xf ffmpeg-release-amd64-static.tar.xz.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
+        tar -xf ffmpeg-release-amd64-static.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
         FILE=$(ls | grep ffmpeg)
         mv $FILE ffmpeg-amd64
         rm ffmpeg
