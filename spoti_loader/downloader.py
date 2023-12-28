@@ -39,6 +39,23 @@ def set_music_thumbnail(filename, image_url) -> None:
     tags.save()
 
 
+def get_song_genres(token, rawartists: list[str], track_name: str) -> list[str]:
+    try:
+        genres = []
+        for data in rawartists:
+            (raw, artistInfo) = invoke_url(token, f"{data[HREF]}")
+            if len(artistInfo[GENRES]) > 0:
+                for genre in artistInfo[GENRES]:
+                    genres.append(genre)
+            elif len(artistInfo[GENRES]) > 0:
+                genres.append(artistInfo[GENRES][0])
+        if len(genres) == 0:
+            genres.append("")
+        return genres
+    except Exception as e:
+        raise ValueError(f"Failed to parse GENRES response: {str(e)}\n{raw}")
+
+
 def create_download_directory(download_path: str) -> None:
     Path(os.path.expanduser(download_path)).mkdir(parents=True, exist_ok=True)
 
@@ -245,6 +262,10 @@ def download_track(session, token: str, downloadPath: str, track_id: str) -> Non
                         )
                     except ValueError:
                         pass
+                    """ try: """
+                    """     genres = get_song_genres(raw_artists, name) """
+                    """ except Exception: """
+                    """     genres = [""] """
                     convert_audio_format(filename_temp)
                     try:
                         set_audio_tags(
