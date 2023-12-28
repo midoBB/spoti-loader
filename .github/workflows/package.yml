@@ -34,9 +34,9 @@ jobs:
         poetry build
     - name: Append Requirements to Tarball
       run: |
-        tar -xzvf ./dist/spoti_loader-0.1.0.tar.gz -C ./dist
-        cp ./requirements.txt ./dist
-        tar -czvf ./dist/spoti_loader-0.1.0.tar.gz -C ./dist .
+        tar -xzvf ./dist/spoti_loader-0.1.0.tar.gz -C ./dist/spoti_loader
+        cp ./requirements.txt ./dist/spoti_loader
+        zip -r ./dist/spoti_loader.zip ./dist/spoti_loader
     - name: Upload Distribution Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -67,6 +67,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/spoti_loader-0.1.0.tar.gz
-        asset_name: spotiloader.tar.gz
-        asset_content_type: application/gzip
+        asset_path: ./dist/spoti_loader.zip
+        asset_name: spotiloader.zip
+        asset_content_type: application/zip
