@@ -30,13 +30,21 @@ jobs:
     - name: Package Project
       run: |
         poetry build
-    - name: List
-      run: ls -l ./dist
+    - name: Upload Distribution Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: ./dist
 
   create_release:
     runs-on: ubuntu-latest
     needs: package
     steps:
+    - name: Download Distribution Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: dist
+        path: ./dist
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
