@@ -23,10 +23,6 @@ from spoti_loader.utils import invoke_url_with_params
 from spoti_loader.downloader import download_track
 
 
-import logging
-import sys
-import os
-
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")

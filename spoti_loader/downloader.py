@@ -286,7 +286,9 @@ def convert_audio_format(filename) -> None:
     output_params = ["-c:a", file_codec]
     if bitrate:
         output_params += ["-b:a", bitrate]
+    ffmpeg_executable = os.path.join(os.getcwd(), "ffmpeg")
     ff_m = ffmpy.FFmpeg(
+        executable=ffmpeg_executable,
         global_options=["-y", "-hide_banner", "-loglevel error"],
         inputs={temp_filename: None},
         outputs={filename: output_params},
