@@ -26,9 +26,6 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install
-    - name: Export Requirements
-      run: |
-        poetry export -f requirements.txt --without-hashes --output requirements.txt
     - name: Package Project
       run: |
         poetry build
@@ -44,7 +41,7 @@ jobs:
     - name: Append Requirements to Tarball
       run: |
         tar -xzvf ./dist/spoti_loader-0.1.0.tar.gz
-        cp ./requirements.txt ./spoti_loader-0.1.0
+        cp ./poetry.lock ./spoti_loader-0.1.0
         mkdir dest-armv7
         mkdir dest-amd64
         cp -r ./spoti_loader-0.1.0/* dest-armv7
@@ -52,8 +49,8 @@ jobs:
         cp ./ffmpeg-armv7 dest-armv7/ffmpeg
         cp ./ffmpeg-amd64 dest-amd64/ffmpeg
         mkdir dest
-        zip -r ./dest/spoti_loader_armv7.zip ./dest-armv7
-        zip -r ./dest/spoti_loader_amd64.zip ./dest-amd64
+        cd ./dest-armv7 && zip -r ../spoti_loader_armv7.zip .
+        cd ./dest-amd64 && zip -r ../spoti_loader_amd64.zip .
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
