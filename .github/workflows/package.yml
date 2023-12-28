@@ -26,10 +26,17 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install
-
+    - name: Export Requirements
+      run: |
+        poetry export -f requirements.txt --without-hashes --output requirements.txt
     - name: Package Project
       run: |
         poetry build
+    - name: Append Requirements to Tarball
+      run: |
+        tar -xzvf ./dist/spoti_loader-0.1.0.tar.gz -C ./dist
+        cp ./requirements.txt ./dist
+        tar -czvf ./dist/spoti_loader-0.1.0.tar.gz -C ./dist .
     - name: Upload Distribution Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -61,5 +68,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/spoti_loader-0.1.0.tar.gz
-        asset_name: spoti_loader.tar.gz
+        asset_name: spotiloader.tar.gz
         asset_content_type: application/gzip
