@@ -37,6 +37,7 @@ jobs:
         wget "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-static.tar.xz"
         wget "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
         tar -xf ffmpeg-release-armhf-static.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
+        ls -la .
         FILE=$(ls | grep ffmpeg)
         mv $FILE ffmpeg-armv7
         rm ffmpeg
