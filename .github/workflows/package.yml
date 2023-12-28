@@ -35,13 +35,14 @@ jobs:
     - name: Append Requirements to Tarball
       run: |
         tar -xzvf ./dist/spoti_loader-0.1.0.tar.gz
-        cp ./requirements.txt ./dist/spoti_loader-0.1.0
-        zip -r ./dist/spoti_loader.zip ./dist/spoti_loader-0.1.0
+        cp ./requirements.txt ./spoti_loader-0.1.0
+        mkdir dest
+        zip -r ./dest/spoti_loader.zip ./spoti_loader-0.1.0
     - name: Upload Distribution Artifact
       uses: actions/upload-artifact@v2
       with:
         name: dist
-        path: ./dist
+        path: ./dest
 
   create_release:
     runs-on: ubuntu-latest
