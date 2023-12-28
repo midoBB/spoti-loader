@@ -50,7 +50,7 @@ jobs:
         cp ./ffmpeg-amd64 dest-amd64/ffmpeg
         mkdir dest
         cd ./dest-armv7 && zip -r ../spoti_loader_armv7.zip .
-        cd ./dest-amd64 && zip -r ../spoti_loader_amd64.zip .
+        cd ../dest-amd64 && zip -r ../spoti_loader_amd64.zip .
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
