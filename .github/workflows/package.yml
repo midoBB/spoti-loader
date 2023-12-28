@@ -30,6 +30,8 @@ jobs:
     - name: Package Project
       run: |
         poetry build
+    - name: List
+      run: ls -l ./dist
 
   create_release:
     runs-on: ubuntu-latest
