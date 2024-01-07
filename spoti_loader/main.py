@@ -4,6 +4,7 @@ import logging
 import sys
 import sqlite3
 import requests
+from pathlib import PurePath, Path
 from librespot.audio.decoders import AudioQuality
 from librespot.core import Session
 from spoti_loader.const import (
@@ -18,8 +19,10 @@ from spoti_loader.const import (
     TRACK,
     NAME,
     ID,
+    ARTISTS,
+    EXT_MAP,
 )
-from spoti_loader.utils import invoke_url_with_params
+from spoti_loader.utils import invoke_url_with_params, get_log_db, fix_filename
 from spoti_loader.downloader import download_track
 
 
@@ -122,11 +125,40 @@ def send_discord_notifications(songs, errors):
             send_to_discord(discord, "SpotiLoader Errors", error_message, 16753920)
 
 
+def song_previously_downloaded(song_id: str) -> bool:
+    conn = sqlite3.connect(get_log_db())
+    cursor = conn.cursor()
+    cursor.execute("SELECT EXISTS (SELECT 1 FROM songs WHERE id = ?);", (song_id,))
+    result = cursor.fetchone()
+
+    # Close the database connection
+    conn.close()
+
+    # Return True if the song_id exists, False otherwise
+    return result[0] == 1
+
+
 def download_songs() -> tuple[list, list]:
     errors = []
     downloaded = []
     for song in get_saved_tracks():
         if song[TRACK][NAME] and song[TRACK][ID]:
+            logger.info(f"Checking {song[TRACK][NAME]}")
+            output_template = "{artist} - {song_name}.{ext}"
+            ext = EXT_MAP.get("ogg")
+            output_template = output_template.replace(
+                "{artist}", fix_filename(song[TRACK][ARTISTS][0][NAME])
+            )
+            output_template = output_template.replace(
+                "{song_name}", fix_filename(song[TRACK][NAME])
+            )
+            output_template = output_template.replace("{ext}", ext)
+            filename = PurePath(output).joinpath(output_template)
+            check_name = Path(filename).is_file() and Path(filename).stat().st_size
+            check_id = song_previously_downloaded(song[TRACK][ID])
+            if check_id and check_name:
+                logger.info(f"Skipping {song[TRACK][NAME]}")
+                continue
             try:
                 songtitle = download_track(session, token, output, song[TRACK][ID])
                 if songtitle is not None:
