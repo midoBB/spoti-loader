@@ -14,9 +14,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Create Tarball
+      - name: Zip Repository
         run: |
-          tar --exclude-vcs --exclude='.github' --warning=no-file-changed -czvf spotiloader.tar.gz .
+          rm -rf .git
+          rm -rf .github
+          zip -r spotiloader.zip .
 
       - name: Create Release
         id: create_release
@@ -34,6 +36,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./spotiloader.tar.gz
-          asset_name: spotiloader.tar.gz
-          asset_content_type: application/gzip
+          asset_path: ./spotiloader.zip
+          asset_name: spotiloader.zip
+          asset_content_type: application/zip
