@@ -3,79 +3,36 @@ name: Package Project and Release
 on:
   push:
     branches:
-      - master  # Change this to your main branch name
+      - master # Change this to your main branch name
 
 jobs:
   package:
     runs-on: "ubuntu-latest"
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9  # Change this to your Python version
+      - name: Zip Repository
+        run: |
+          zip -r repo.zip .
 
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python -
-        export PATH="$HOME/.poetry/bin:$PATH"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
 
-    - name: Install dependencies
-      run: |
-        poetry install
-    - name: Package Project
-      run: |
-        poetry build
-    - name: Download and Include ffmpeg
-      run: |
-        wget "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-armhf-static.tar.xz"
-        wget "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz"
-        tar -xf ffmpeg-release-armhf-static.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
-        ls -la .
-        mv ffmpeg ffmpeg-armv7
-        tar -xf ffmpeg-release-amd64-static.tar.xz --strip-components=1 --wildcards --no-anchored '*/ffmpeg*'
-        mv ffmpeg ffmpeg-amd64
-    - name: Append Requirements to Tarball
-      run: |
-        tar -xzvf ./dist/spoti_loader-0.1.0.tar.gz
-        cp ./poetry.lock ./spoti_loader-0.1.0
-        mkdir dest-armv7
-        mkdir dest-amd64
-        cp -r ./spoti_loader-0.1.0/* dest-armv7
-        cp -r ./spoti_loader-0.1.0/* dest-amd64
-        cp ./ffmpeg-armv7 dest-armv7/ffmpeg
-        cp ./ffmpeg-amd64 dest-amd64/ffmpeg
-        mkdir dest
-        cd ./dest-armv7 && zip -r ../spoti_loader_armv7.zip .
-        cd ../dest-amd64 && zip -r ../spoti_loader_amd64.zip .
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
-    - name: Upload Release Asset (ARMv7)
-      id: upload-release-asset_armv7
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./spoti_loader_armv7.zip
-        asset_name: spotiloader_armv7.zip
-        asset_content_type: application/zip
-    - name: Upload Release Asset (x64)
-      id: upload-release-asset_x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./spoti_loader_amd64.zip
-        asset_name: spotiloader_x64.zip
-        asset_content_type: application/zip
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./repo.zip
+          asset_name: repo.zip
+          asset_content_type: application/zip

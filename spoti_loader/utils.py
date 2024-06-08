@@ -1,7 +1,7 @@
 import requests
 import re
 import sqlite3
-from spoti_loader.const import LIMIT, OFFSET
+from .const import LIMIT, OFFSET
 import os
 
 
@@ -53,7 +53,7 @@ def get_log_db() -> str:
     xdg_config_home = os.getenv("XDG_CONFIG_HOME")
     if xdg_config_home is None:
         xdg_config_home = os.path.expanduser("~/.config")
-    dbfile = os.path.join(xdg_config_home, "spoti-loader", "log.db")
+    dbfile = os.path.join(xdg_config_home, "spotiloader", "log.db")
     conn = sqlite3.connect(dbfile)
     c = conn.cursor()
     create_table_query = """CREATE TABLE IF NOT EXISTS songs (

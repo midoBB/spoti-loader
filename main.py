@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import os
 import logging
@@ -14,8 +15,6 @@ from spoti_loader.const import (
     USER_FOLLOW_READ,
     SAVED_TRACKS_URL,
     ITEMS,
-    LIMIT,
-    OFFSET,
     TRACK,
     NAME,
     ID,
@@ -43,10 +42,10 @@ def get_cred_file():
     xdg_config_home = os.getenv("XDG_CONFIG_HOME")
     if xdg_config_home is None:
         xdg_config_home = os.path.expanduser("~/.config")
-    return os.path.join(xdg_config_home, "spoti-loader", "cred.json")
+    return os.path.join(xdg_config_home, "spotiloader", "config.json")
 
 
-def load_json_file(filepath: str) -> tuple[str, str, str]:
+def load_json_file(filepath: str) -> tuple[str, str, str, str] | None:
     try:
         with open(filepath, "r") as f:
             data = json.load(f)
@@ -59,8 +58,10 @@ def load_json_file(filepath: str) -> tuple[str, str, str]:
         return username, password, output, discord
     except FileNotFoundError:
         fatalf(f"File {filepath} not found.")
+        return None
     except json.JSONDecodeError:
         fatalf(f"Invalid JSON in file {filepath}.")
+        return None
 
 
 username, password, output, discord = load_json_file(get_cred_file())
