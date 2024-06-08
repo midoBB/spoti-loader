@@ -16,7 +16,7 @@ jobs:
 
       - name: Create Tarball
         run: |
-          tar --exclude-vcs --exclude='.github' -czvf spotiloader.tar.gz .
+          tar --exclude-vcs --exclude='.github' --warning=no-file-changed -czvf spotiloader.tar.gz .
 
       - name: Create Release
         id: create_release
