@@ -1,9 +1,10 @@
+---
 name: Package Project and Release
 
 on:
   push:
     branches:
-      - master # Change this to your main branch name
+      - master
 
 jobs:
   package:
@@ -13,9 +14,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Zip Repository
+      - name: Create Tarball
         run: |
-          zip -r repo.zip .
+          tar --exclude-vcs --exclude='.github' -czvf spotiloader.tar.gz .
 
       - name: Create Release
         id: create_release
@@ -33,6 +34,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./repo.zip
-          asset_name: repo.zip
-          asset_content_type: application/zip
+          asset_path: ./spotiloader.tar.gz
+          asset_name: spotiloader.tar.gz
+          asset_content_type: application/gzip
